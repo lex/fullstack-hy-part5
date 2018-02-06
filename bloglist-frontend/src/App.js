@@ -3,9 +3,12 @@ import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
+const KEY_USER = "user";
+
 class App extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       blogs: [],
       user: null,
@@ -14,27 +17,42 @@ class App extends React.Component {
     };
   }
 
-  componentDidMount() {
-    blogService.getAll().then(blogs => this.setState({ blogs }));
+  async componentDidMount() {
+    const blogs = await blogService.getAll();
+    this.setState({ blogs });
+
+    const userJson = window.localStorage.getItem(KEY_USER);
+
+    if (!userJson) {
+      return;
+    }
+
+    const user = JSON.parse(userJson);
+    this.setState({ user });
   }
 
   login = async event => {
     event.preventDefault();
-
-    console.log(
-      `logging in with ${this.state.username}:${this.state.password}`
-    );
 
     try {
       const credentials = {
         username: this.state.username,
         password: this.state.password
       };
+
       const user = await loginService.login(credentials);
+
+      window.localStorage.setItem(KEY_USER, JSON.stringify(user));
+
       this.setState({ username: "", password: "", user });
     } catch (exception) {
       console.log(exception);
     }
+  };
+
+  logout = () => {
+    window.localStorage.clear();
+    this.setState({ user: null });
   };
 
   handleLoginFieldChange = event => {
@@ -77,6 +95,7 @@ class App extends React.Component {
       <div>
         <h2>blogs</h2>
         <p>logged in as {this.state.user.name}</p>
+        <button onClick={this.logout}>log out</button>
         {this.state.blogs.map(blog => <Blog key={blog._id} blog={blog} />)}
       </div>
     );
