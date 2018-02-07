@@ -1,6 +1,7 @@
 import React from "react";
 import Blog from "./components/blog";
 import NewBlogForm from "./components/form-new-blog";
+import Notification from "./components/notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -14,7 +15,8 @@ class App extends React.Component {
       blogs: [],
       user: null,
       username: "",
-      password: ""
+      password: "",
+      notification: null
     };
   }
 
@@ -50,6 +52,7 @@ class App extends React.Component {
       this.setState({ username: "", password: "", user });
     } catch (exception) {
       console.log(exception);
+      this.showNotification("ERROR", `invalid credentials`);
     }
   };
 
@@ -70,15 +73,30 @@ class App extends React.Component {
       this.setState({
         blogs: this.state.blogs.concat(newBlog)
       });
+
+      this.showNotification(
+        "SUCCESS",
+        `added ${newBlog.title} by ${newBlog.author}`
+      );
     } catch (exception) {
       console.log(exception);
     }
+  };
+
+  showNotification = (style, message) => {
+    this.setState({ notification: { style: style, message } });
+    setTimeout(() => {
+      this.setState({ notification: null });
+    }, 3000);
   };
 
   renderLogin() {
     return (
       <div>
         <h2>log in</h2>
+
+        <Notification notification={this.state.notification} />
+
         <form onSubmit={this.login}>
           <div>
             username:{" "}
@@ -113,6 +131,8 @@ class App extends React.Component {
 
         <p>logged in as {this.state.user.name}</p>
         <button onClick={this.logout}>log out</button>
+
+        <Notification notification={this.state.notification} />
 
         <NewBlogForm createBlog={this.createBlog} />
 
