@@ -6,7 +6,8 @@ class NewBlogForm extends Component {
     this.state = {
       author: "",
       title: "",
-      url: ""
+      url: "",
+      adding: false
     };
   }
 
@@ -26,11 +27,24 @@ class NewBlogForm extends Component {
     this.setState({
       author: "",
       title: "",
-      url: ""
+      url: "",
+      adding: false
     });
   };
 
+  startAdding = () => {
+    this.setState({ adding: true });
+  };
+
   render() {
+    if (!this.state.adding) {
+      return (
+        <div>
+          <button onClick={this.startAdding}>add new</button>
+        </div>
+      );
+    }
+
     return (
       <div>
         <h3>create new</h3>
