@@ -4,7 +4,7 @@ import blogService from "../services/blogs";
 class Blog extends Component {
   constructor(props) {
     super(props);
-    this.state = { showDetails: false, blog: this.props.blog };
+    this.state = { showDetails: false, blog: this.props.blog, deleted: false };
   }
 
   toggleDetails = () => {
@@ -23,7 +23,24 @@ class Blog extends Component {
     this.setState({ blog: result });
   };
 
+  delete = async () => {
+    if (
+      !window.confirm(
+        `delete ${this.state.blog.title} by ${this.state.blog.author}?`
+      )
+    ) {
+      return;
+    }
+
+    await blogService.remove(this.state.blog.id);
+    this.setState({ deleted: true });
+  };
+
   render() {
+    if (this.state.deleted) {
+      return null;
+    }
+
     const blogStyle = {
       border: "1px solid black",
       borderRadius: "5px",
@@ -52,6 +69,11 @@ class Blog extends Component {
                 {this.state.blog.user ? this.state.blog.user.name : "undefined"}
               </p>
             </div>
+            {this.props.createdByUser && (
+              <div>
+                <button onClick={this.delete}>delete</button>
+              </div>
+            )}
           </div>
         )}
       </div>

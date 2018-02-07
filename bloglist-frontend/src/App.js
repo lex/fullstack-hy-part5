@@ -137,7 +137,15 @@ class App extends React.Component {
 
         <NewBlogForm createBlog={this.createBlog} />
 
-        {this.state.blogs.map(blog => <Blog key={blog._id} blog={blog} />)}
+        {this.state.blogs.map(blog => (
+          <Blog
+            key={blog._id}
+            blog={blog}
+            createdByUser={
+              blog.user ? blog.user._id === this.state.user.id : true
+            }
+          />
+        ))}
       </div>
     );
   }
