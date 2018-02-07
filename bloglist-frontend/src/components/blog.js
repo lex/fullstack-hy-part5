@@ -1,16 +1,27 @@
 import React, { Component } from "react";
+import blogService from "../services/blogs";
 
 class Blog extends Component {
   constructor(props) {
     super(props);
-    this.state = { showDetails: false };
+    this.state = { showDetails: false, blog: this.props.blog };
   }
 
   toggleDetails = () => {
     this.setState({ showDetails: !this.state.showDetails });
   };
 
-  like = () => {};
+  like = async () => {
+    const modifiedBlog = {
+      ...this.state.blog,
+      likes: this.state.blog.likes + 1,
+      user: this.state.blog.user._id
+    };
+
+    const result = await blogService.update(modifiedBlog);
+    console.log(result);
+    this.setState({ blog: result });
+  };
 
   render() {
     const blogStyle = {
@@ -23,22 +34,22 @@ class Blog extends Component {
     return (
       <div style={blogStyle}>
         <p onClick={this.toggleDetails}>
-          {this.props.blog.title} {this.props.blog.author}
+          {this.state.blog.title} {this.state.blog.author}
         </p>
 
         {this.state.showDetails && (
           <div>
             <div>
-              <a href={this.props.blog.url}>{this.props.blog.url}</a>
+              <a href={this.state.blog.url}>{this.state.blog.url}</a>
             </div>
             <div>
-              {this.props.blog.likes} likes{" "}
+              {this.state.blog.likes} likes{" "}
               <button onClick={this.like}>like</button>
             </div>
             <div>
               <p>
                 added by{" "}
-                {this.props.blog.user ? this.props.blog.user.name : "undefined"}
+                {this.state.blog.user ? this.state.blog.user.name : "undefined"}
               </p>
             </div>
           </div>
