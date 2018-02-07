@@ -1,5 +1,6 @@
 import React from "react";
-import Blog from "./components/Blog";
+import Blog from "./components/blog";
+import NewBlogForm from "./components/form-new-blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -28,6 +29,7 @@ class App extends React.Component {
     }
 
     const user = JSON.parse(userJson);
+    blogService.setToken(user.token);
     this.setState({ user });
   }
 
@@ -42,6 +44,7 @@ class App extends React.Component {
 
       const user = await loginService.login(credentials);
 
+      blogService.setToken(user.token);
       window.localStorage.setItem(KEY_USER, JSON.stringify(user));
 
       this.setState({ username: "", password: "", user });
@@ -52,6 +55,7 @@ class App extends React.Component {
 
   logout = () => {
     window.localStorage.clear();
+    blogService.setToken(null);
     this.setState({ user: null });
   };
 
@@ -59,13 +63,25 @@ class App extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
+  createBlog = async content => {
+    try {
+      const newBlog = await blogService.create(content);
+
+      this.setState({
+        blogs: this.state.blogs.concat(newBlog)
+      });
+    } catch (exception) {
+      console.log(exception);
+    }
+  };
+
   renderLogin() {
     return (
       <div>
-        <h2>Kirjaudu sovellukseen</h2>
+        <h2>log in</h2>
         <form onSubmit={this.login}>
           <div>
-            username{" "}
+            username:{" "}
             <input
               type="text"
               name="username"
@@ -75,7 +91,7 @@ class App extends React.Component {
           </div>
 
           <div>
-            password{" "}
+            password:{" "}
             <input
               type="password"
               name="password"
@@ -94,8 +110,12 @@ class App extends React.Component {
     return (
       <div>
         <h2>blogs</h2>
+
         <p>logged in as {this.state.user.name}</p>
         <button onClick={this.logout}>log out</button>
+
+        <NewBlogForm createBlog={this.createBlog} />
+
         {this.state.blogs.map(blog => <Blog key={blog._id} blog={blog} />)}
       </div>
     );
