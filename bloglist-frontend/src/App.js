@@ -22,6 +22,7 @@ class App extends React.Component {
 
   async componentDidMount() {
     const blogs = await blogService.getAll();
+    blogs.sort((l, r) => (l.likes > r.likes ? -1 : 1));
     this.setState({ blogs });
 
     const userJson = window.localStorage.getItem(KEY_USER);
