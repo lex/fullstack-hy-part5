@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import blogService from "../services/blogs";
 
 class Blog extends Component {
@@ -80,5 +81,9 @@ class Blog extends Component {
     );
   }
 }
+
+Blog.propTypes = {
+  blog: PropTypes.object
+};
 
 export default Blog;

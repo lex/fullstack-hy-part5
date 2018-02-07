@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 
 class Notification extends Component {
   render() {
@@ -19,5 +20,9 @@ class Notification extends Component {
     );
   }
 }
+
+Notification.propTypes = {
+  notification: PropTypes.object
+};
 
 export default Notification;
