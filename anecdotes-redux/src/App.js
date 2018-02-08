@@ -7,6 +7,11 @@ class App extends React.Component {
 
   render() {
     const anecdotes = this.props.store.getState();
+
+    anecdotes.sort(
+      (l, r) => (l.votes > r.votes ? -1 : l.votes === r.votes ? 0 : 1)
+    );
+
     return (
       <div>
         <h2>Anecdotes</h2>
