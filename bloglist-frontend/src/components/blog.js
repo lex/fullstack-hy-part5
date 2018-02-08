@@ -50,13 +50,13 @@ class Blog extends Component {
     };
 
     return (
-      <div style={blogStyle}>
-        <p onClick={this.toggleDetails}>
+      <div className="content" style={blogStyle}>
+        <p className="initial" onClick={this.toggleDetails}>
           {this.state.blog.title} {this.state.blog.author}
         </p>
 
         {this.state.showDetails && (
-          <div>
+          <div className="details">
             <div>
               <a href={this.state.blog.url}>{this.state.blog.url}</a>
             </div>
